@@ -23,7 +23,7 @@ class ExtendedImageEditor extends StatefulWidget {
             'Make sure the image provider is ExtendedImageProvider, we will get raw image data from it'),
         super(key: key);
   final ExtendedImageState extendedImageState;
-  final Function moveEnd;
+  final Function(Rect layoutRect, Rect cropRect) moveEnd;
   @override
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
 }

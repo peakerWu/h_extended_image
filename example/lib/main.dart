@@ -1,114 +1,89 @@
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
-import 'package:extended_image/extended_image.dart';
-import 'package:extended_image_library/extended_image_library.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:example/image_editor.dart';
 import 'package:flutter/material.dart';
-import 'package:oktoast/oktoast.dart';
-import 'example_route.dart';
-import 'example_route_helper.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  MyApp() {
-    if (!kIsWeb) {
-      clearDiskCachedImages(duration: const Duration(days: 7));
-    }
-    listSourceRepository.loadData().then((bool result) {
-      if (listSourceRepository.isNotEmpty) {
-        _imageTestUrl = listSourceRepository.first.imageUrl;
-      }
-    });
-  }
-  final TuChongRepository listSourceRepository = TuChongRepository();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return OKToast(
-        child: MaterialApp(
-      title: 'extended image demo',
-      debugShowCheckedModeBanner: false,
+    return MaterialApp(
+      title: 'Flutter Demo',
       theme: ThemeData(
+        // This is the theme of your application.
+        //
+        // Try running your application with "flutter run". You'll see the
+        // application has a blue toolbar. Then, without quitting the app, try
+        // changing the primarySwatch below to Colors.green and then invoke
+        // "hot reload" (press "r" in the console where you ran "flutter run",
+        // or simply save your changes to "hot reload" in a Flutter IDE).
+        // Notice that the counter didn't reset back to zero; the application
+        // is not restarted.
         primarySwatch: Colors.blue,
+        // This makes the visual density adapt to the platform that you run
+        // the app on. For desktop platforms, the controls will be smaller and
+        // closer together (more dense) than on mobile platforms.
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      builder: (BuildContext c, Widget w) {
-        ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
-        // ScreenUtil.instance =
-        //     ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
-        //       ..init(c);
-        if (!kIsWeb) {
-          final MediaQueryData data = MediaQuery.of(c);
-          return MediaQuery(
-            data: data.copyWith(textScaleFactor: 1.0),
-            child: w,
-          );
-        }
-        return w;
-      },
-      initialRoute: 'fluttercandies://mainpage',
-      onGenerateRoute: (RouteSettings settings) {
-        String routeName = settings.name;
-        //when refresh web, route will as following
-        //   /
-        //   /fluttercandies:
-        //   /fluttercandies:/
-        //   /fluttercandies://mainpage
-
-        if (kIsWeb && routeName.startsWith('/')) {
-          routeName = routeName.replaceFirst('/', '');
-        }
-
-        final RouteResult routeResult = getRouteResult(
-            name: routeName,
-            arguments: settings.arguments as Map<String, dynamic>);
-
-        if (routeResult.showStatusBar != null ||
-            routeResult.routeName != null) {
-          settings = FFRouteSettings(
-              arguments: settings.arguments,
-              name: routeName,
-              routeName: routeResult.routeName,
-              showStatusBar: routeResult.showStatusBar);
-        }
-
-        final Widget page = routeResult.widget ??
-            getRouteResult(
-                    name: 'fluttercandies://mainpage',
-                    arguments: settings.arguments as Map<String, dynamic>)
-                .widget;
-
-        final TargetPlatform platform = Theme.of(context).platform;
-        switch (routeResult.pageRouteType) {
-          case PageRouteType.material:
-            return MaterialPageRoute<void>(
-                settings: settings, builder: (BuildContext c) => page);
-          case PageRouteType.cupertino:
-            return CupertinoPageRoute<void>(
-                settings: settings, builder: (BuildContext c) => page);
-          case PageRouteType.transparent:
-            return platform == TargetPlatform.iOS
-                ? TransparentCupertinoPageRoute<void>(
-                    settings: settings, builder: (BuildContext c) => page)
-                : TransparentMaterialPageRoute<void>(
-                    settings: settings, builder: (BuildContext c) => page);
-//            return FFTransparentPageRoute(
-//                settings: settings,
-//                pageBuilder: (BuildContext context, Animation<double> animation,
-//                        Animation<double> secondaryAnimation) =>
-//                    page);
-          default:
-            return platform == TargetPlatform.iOS
-                ? CupertinoPageRoute<void>(
-                    settings: settings, builder: (BuildContext c) => page)
-                : MaterialPageRoute<void>(
-                    settings: settings, builder: (BuildContext c) => page);
-        }
-      },
-    ));
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
+    );
   }
 }
 
-String _imageTestUrl;
-String get imageTestUrl =>
-    _imageTestUrl ?? 'https://photo.tuchong.com/4870004/f/298584322.jpg';
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // This method is rerun every time setState is called, for instance as done
+    // by the _incrementCounter method above.
+    //
+    // The Flutter framework has been optimized to make rerunning build methods
+    // fast, so that you can just rebuild anything that needs updating rather
+    // than having to individually change instances of widgets.
+    return Scaffold(
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
+      body: ImageEditorPage(),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _incrementCounter,
+      //   tooltip: 'Increment',
+      //   child: Icon(Icons.add),
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}

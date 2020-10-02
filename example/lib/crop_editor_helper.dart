@@ -2,15 +2,18 @@
 import 'dart:isolate';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 // ignore: implementation_imports
 import 'package:http/src/response.dart';
 import 'package:http_client_helper/http_client_helper.dart';
-import 'package:isolate/load_balancer.dart';
-import 'package:isolate/isolate_runner.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:image/image.dart';
 import 'package:image_editor/image_editor.dart';
+import 'package:isolate/load_balancer.dart';
+import 'package:isolate/isolate_runner.dart';
+// import 'package:extended_image/extended_image.dart';
+// import 'package:image/image.dart';
+// import 'package:image_editor/image_editor.dart';
 
 final Future<LoadBalancer> loadBalancer =
     LoadBalancer.create(1, IsolateRunner.spawn);
@@ -104,7 +107,7 @@ Future<List<int>> cropImageDataWithDartLibrary(
 
   final DateTime time2 = DateTime.now();
 
-  print('${time2.difference(time1)} : decode');
+  // print('${time2.difference(time1)} : decode');
 
   //clear orientation
   src = bakeOrientation(src);
@@ -131,7 +134,7 @@ Future<List<int>> cropImageDataWithDartLibrary(
   }
 
   final DateTime time3 = DateTime.now();
-  print('${time3.difference(time2)} : crop/flip/rotate');
+  // print('${time3.difference(time2)} : crop/flip/rotate');
 
   /// you can encode your image
   ///
@@ -149,8 +152,8 @@ Future<List<int>> cropImageDataWithDartLibrary(
   }
 
   final DateTime time4 = DateTime.now();
-  print('${time4.difference(time3)} : encode');
-  print('${time4.difference(time1)} : total time');
+  // print('${time4.difference(time3)} : encode');
+  // print('${time4.difference(time1)} : total time');
   return fileData;
 }
 

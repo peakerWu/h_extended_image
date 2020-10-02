@@ -470,7 +470,7 @@ class ExtendedImage extends StatefulWidget {
   /// key of ExtendedImageEditor
   final Key extendedImageEditorKey;
 
-  final Function moveEnd;
+  final Function(Rect layoutRect, Rect cropRect) moveEnd;
 
   /// whether enable slide out page
   /// you should make sure this is in [ExtendedImageSlidePage]

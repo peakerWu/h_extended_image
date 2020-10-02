@@ -35,7 +35,7 @@ class ExtendedImageCropLayer extends StatefulWidget {
   final EditorConfig editorConfig;
   final Rect layoutRect;
   final BoxFit fit;
-  final Function moveEnd;
+  final Function(Rect layoutRect, Rect cropRect) moveEnd;
   @override
   ExtendedImageCropLayerState createState() => ExtendedImageCropLayerState();
 }
@@ -62,6 +62,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     _rectTweenController = AnimationController(
         vsync: this, duration: widget.editorConfig.animationDuration)
       ..addListener(_doCropAutoCenterAnimation);
+    debugPrint("$cropRect");
     super.initState();
   }
 
@@ -101,14 +102,15 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
     final Widget result = CustomPaint(
       painter: ExtendedImageCropLayerPainter(
-          cropRect: cropRect,
-          cornerColor: cornerColor,
-          cornerSize: editConfig.cornerSize,
-          lineColor: editConfig.lineColor ??
-              Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
-          lineHeight: editConfig.lineHeight,
-          maskColor: maskColor,
-          pointerDown: _pointerDown),
+        cropRect: cropRect,
+        cornerColor: cornerColor,
+        cornerSize: editConfig.cornerSize,
+        lineColor: editConfig.lineColor ??
+            Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
+        lineHeight: editConfig.lineHeight,
+        maskColor: maskColor,
+        pointerDown: _pointerDown,
+      ),
       child: Stack(
         children: <Widget>[
           //top left
@@ -334,7 +336,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
   void _moveContainerEnd() {
     if (widget.moveEnd != null) {
-      widget.moveEnd();
+      widget.moveEnd(cropRect, layoutRect);
     }
   }
 
@@ -543,7 +545,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     if (_currentMoveType != null && moveType == _currentMoveType) {
       _currentMoveType = null;
       if (widget.moveEnd != null) {
-        widget.moveEnd();
+        widget.moveEnd(cropRect, layoutRect);
       }
       //if (widget.editorConfig.autoCenter)
       // _startTimer();
@@ -691,8 +693,10 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
           ..style = PaintingStyle.fill
           ..color = maskColor);
 
+    //外框的四条线
     canvas.drawRect(cropRect, linePainter);
 
+    /// 收支按下之后出现的三条白线。
     if (pointerDown) {
       canvas.drawLine(
           Offset((cropRect.right - cropRect.left) / 3.0 + cropRect.left,
@@ -728,6 +732,8 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
           ),
           linePainter);
     }
+
+    // 四个角的线
     final Paint cornerPainter = Paint()
       ..strokeWidth = cornerSize.height
       ..color = cornerColor
@@ -739,71 +745,82 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
     final double cornerTop = cropRect.top + marginTop;
     final double cornerBottom = cropRect.bottom - marginTop;
     final double cornerRight = cropRect.right - marginTop;
+    // leftTop
     canvas.drawPath(
         Path()
-          ..moveTo(cornerLeft, cornerTop + cornerWidth)
-          ..lineTo(cornerLeft, cornerTop + cornerWidth / 2)
+          ..moveTo(cornerLeft - cornerHeight / 2, cornerTop + cornerWidth -  cornerHeight / 2)
+          ..lineTo(cornerLeft - cornerHeight / 2, cornerTop + cornerWidth / 2)
           ..arcTo(
               Rect.fromLTWH(
-                cornerLeft,
-                cornerTop,
+                cornerLeft - cornerHeight / 2,
+                cornerTop - cornerHeight / 2,
                 cornerWidth / 2,
                 cornerWidth / 2,
               ),
               180.0 * (pi / 180.0),
               90.0 * (pi / 180.0),
               false)
-          ..lineTo(cornerLeft + cornerWidth, cornerTop),
+          ..lineTo(cornerLeft - cornerHeight / 2 + cornerWidth,
+              cornerTop - cornerHeight / 2),
         cornerPainter);
 
+    // bottomLeft
     canvas.drawPath(
         Path()
-          ..moveTo(cornerLeft + cornerWidth, cornerBottom)
-          ..lineTo(cornerLeft + cornerWidth / 2, cornerBottom)
+          ..moveTo(cornerLeft - cornerHeight / 2 + cornerWidth,
+              cornerBottom + cornerHeight / 2)
+          ..lineTo(cornerLeft - cornerHeight / 2 + cornerWidth / 2,
+              cornerBottom + cornerHeight / 2)
           ..arcTo(
               Rect.fromLTWH(
-                cornerLeft,
-                cornerBottom - cornerWidth / 2,
+                cornerLeft - cornerHeight / 2,
+                cornerBottom - cornerWidth / 2 + cornerHeight / 2,
                 cornerWidth / 2,
                 cornerWidth / 2,
               ),
               90.0 * (pi / 180.0),
               90.0 * (pi / 180.0),
               false)
-          ..lineTo(cornerLeft, cornerBottom - cornerWidth),
+          ..lineTo(cornerLeft - cornerHeight / 2,
+              cornerBottom - cornerWidth),
         cornerPainter);
+
+    //bottomRight
     canvas.drawPath(
         Path()
-          ..moveTo(cornerRight, cornerBottom - cornerWidth)
-          ..lineTo(cornerRight, cornerBottom - cornerWidth / 2)
+          ..moveTo(cornerRight + cornerHeight / 2, cornerBottom - cornerWidth)
+          ..lineTo(
+              cornerRight + cornerHeight / 2, cornerBottom - cornerWidth / 2)
           ..arcTo(
               Rect.fromLTWH(
-                cornerRight - cornerWidth / 2,
-                cornerBottom - cornerWidth / 2,
+                cornerRight - cornerWidth / 2 + cornerHeight / 2,
+                cornerBottom - cornerWidth / 2 + cornerHeight / 2,
                 cornerWidth / 2,
                 cornerWidth / 2,
               ),
               0.0 * (pi / 180.0),
               90.0 * (pi / 180.0),
               false)
-          ..lineTo(cornerRight - cornerWidth, cornerBottom),
+          ..lineTo(cornerRight - cornerWidth + cornerHeight / 2,
+              cornerBottom + cornerHeight / 2),
         cornerPainter);
 
+    // topRight
     canvas.drawPath(
         Path()
-          ..moveTo(cornerRight - cornerWidth, cornerTop)
-          ..lineTo(cornerRight - cornerWidth / 2, cornerTop)
+          ..moveTo(cornerRight - cornerWidth + cornerHeight / 2, cornerTop - cornerHeight / 2)
+          ..lineTo(cornerRight - cornerWidth / 2, cornerTop -  cornerHeight / 2)
           ..arcTo(
               Rect.fromLTWH(
-                cornerRight - cornerWidth / 2,
-                cornerTop,
+                cornerRight - cornerWidth / 2  + cornerHeight / 2,
+                cornerTop - cornerHeight / 2,
                 cornerWidth / 2,
                 cornerWidth / 2,
               ),
               270.0 * (pi / 180.0),
               90.0 * (pi / 180.0),
               false)
-          ..lineTo(cornerRight, cornerTop + cornerWidth),
+          ..lineTo(cornerRight +  cornerHeight / 2, cornerTop + cornerWidth - cornerHeight / 2),
         cornerPainter);
   }
 
