@@ -47,6 +47,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Rect get cropRect => widget.editActionDetails.cropRect;
   set cropRect(Rect value) => widget.editActionDetails.cropRect = value;
 
+
   bool get isAnimating => _rectTweenController?.isAnimating ?? false;
   bool get isMoving => _currentMoveType != null;
   final double _space = 0.0;
@@ -62,7 +63,6 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     _rectTweenController = AnimationController(
         vsync: this, duration: widget.editorConfig.animationDuration)
       ..addListener(_doCropAutoCenterAnimation);
-    debugPrint("$cropRect");
     super.initState();
   }
 
@@ -115,8 +115,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         children: <Widget>[
           //top left
           Positioned(
-            top: cropRect.top,
-            left: cropRect.left,
+            top: cropRect.top - gWidth / 2,
+            left: cropRect.left - gWidth / 2,
             child: Container(
               height: gWidth * 2,
               width: gWidth * 2,
@@ -134,8 +134,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           ),
           //top right
           Positioned(
-            top: cropRect.top,
-            left: cropRect.right - gWidth * 2 - _space * 2,
+            top: cropRect.top - gWidth / 2,
+            left: cropRect.right - gWidth * 3 / 2 - _space * 2,
             child: Container(
               height: gWidth * 2,
               width: gWidth * 2,
@@ -153,8 +153,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           ),
           //bottom left
           Positioned(
-            top: cropRect.bottom - gWidth * 2 - _space * 2,
-            left: cropRect.left,
+            top: cropRect.bottom - gWidth * 3 / 2 - _space * 2,
+            left: cropRect.left - gWidth / 2,
             child: Container(
               height: gWidth * 2,
               width: gWidth * 2,
@@ -172,8 +172,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           ),
           // bottom right
           Positioned(
-            top: cropRect.bottom - gWidth * 2 - _space * 2,
-            left: cropRect.right - gWidth * 2 - _space * 2,
+            top: cropRect.bottom - gWidth * 3 / 2 - _space * 2,
+            left: cropRect.right - gWidth * 3 / 2 - _space * 2,
             child: Container(
               height: gWidth * 2,
               width: gWidth * 2,
@@ -191,11 +191,11 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           ),
           // top
           Positioned(
-            top: cropRect.top,
-            left: cropRect.left + gWidth * 2,
+            top: cropRect.top - gWidth / 2,
+            left: cropRect.left + gWidth * 3 / 2,
             child: Container(
               height: gWidth * 2,
-              width: cropRect.width - gWidth * 4 - _space * 2,
+              width: cropRect.width - gWidth * 3 - _space * 2,
               // color: Colors.orange,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -210,10 +210,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           ),
           //left
           Positioned(
-            top: cropRect.top + gWidth * 2,
-            left: cropRect.left,
+            top: cropRect.top + gWidth * 3 / 2,
+            left: cropRect.left - gWidth / 2,
             child: Container(
-              height: cropRect.height - gWidth * 4 - _space * 2,
+              height: cropRect.height - gWidth * 3 - _space * 2,
               width: gWidth * 2,
               // color: Colors.orange,
               child: GestureDetector(
@@ -229,11 +229,11 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           ),
           //bottom
           Positioned(
-            top: cropRect.bottom - gWidth * 2 - _space * 2,
-            left: cropRect.left + gWidth * 2,
+            top: cropRect.bottom - gWidth * 3/2 - _space * 2,
+            left: cropRect.left + gWidth * 3/2,
             child: Container(
               height: gWidth * 2,
-              width: cropRect.width - gWidth * 4 - _space * 2,
+              width: cropRect.width - gWidth * 3 - _space * 2,
               // color: Colors.orange,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -248,10 +248,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           ),
           //right
           Positioned(
-            top: cropRect.top + gWidth * 2,
-            left: cropRect.right - gWidth * 2 - _space * 2,
+            top: cropRect.top + gWidth * 3/2,
+            left: cropRect.right - gWidth * 3/2 - _space * 2,
             child: Container(
-              height: cropRect.height - gWidth * 4 - _space * 2,
+              height: cropRect.height - gWidth * 3 - _space * 2,
               width: gWidth * 2,
               // color: Colors.orange,
               child: GestureDetector(
@@ -265,13 +265,13 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
               ),
             ),
           ),
-
+          // center
           Positioned(
-            top: cropRect.top + gWidth * 2,
-            left: cropRect.left + gWidth * 2,
+            top: cropRect.top + gWidth * 3/2,
+            left: cropRect.left + gWidth * 3/2,
             child: Container(
-              width: cropRect.right - cropRect.left - gWidth * 4,
-              height: cropRect.bottom - cropRect.top - gWidth * 4,
+              width: cropRect.right - cropRect.left - gWidth * 3,
+              height: cropRect.bottom - cropRect.top - gWidth * 3,
               // color: Colors.red,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -748,7 +748,8 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
     // leftTop
     canvas.drawPath(
         Path()
-          ..moveTo(cornerLeft - cornerHeight / 2, cornerTop + cornerWidth -  cornerHeight / 2)
+          ..moveTo(cornerLeft - cornerHeight / 2,
+              cornerTop + cornerWidth - cornerHeight / 2)
           ..lineTo(cornerLeft - cornerHeight / 2, cornerTop + cornerWidth / 2)
           ..arcTo(
               Rect.fromLTWH(
@@ -781,8 +782,7 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
               90.0 * (pi / 180.0),
               90.0 * (pi / 180.0),
               false)
-          ..lineTo(cornerLeft - cornerHeight / 2,
-              cornerBottom - cornerWidth),
+          ..lineTo(cornerLeft - cornerHeight / 2, cornerBottom - cornerWidth),
         cornerPainter);
 
     //bottomRight
@@ -808,11 +808,12 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
     // topRight
     canvas.drawPath(
         Path()
-          ..moveTo(cornerRight - cornerWidth + cornerHeight / 2, cornerTop - cornerHeight / 2)
-          ..lineTo(cornerRight - cornerWidth / 2, cornerTop -  cornerHeight / 2)
+          ..moveTo(cornerRight - cornerWidth + cornerHeight / 2,
+              cornerTop - cornerHeight / 2)
+          ..lineTo(cornerRight - cornerWidth / 2, cornerTop - cornerHeight / 2)
           ..arcTo(
               Rect.fromLTWH(
-                cornerRight - cornerWidth / 2  + cornerHeight / 2,
+                cornerRight - cornerWidth / 2 + cornerHeight / 2,
                 cornerTop - cornerHeight / 2,
                 cornerWidth / 2,
                 cornerWidth / 2,
@@ -820,7 +821,8 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
               270.0 * (pi / 180.0),
               90.0 * (pi / 180.0),
               false)
-          ..lineTo(cornerRight +  cornerHeight / 2, cornerTop + cornerWidth - cornerHeight / 2),
+          ..lineTo(cornerRight + cornerHeight / 2,
+              cornerTop + cornerWidth - cornerHeight / 2),
         cornerPainter);
   }
 

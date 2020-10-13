@@ -156,7 +156,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                       : rect.width / cropRect.width;
                   cropRect = rect;
                 }
-                _editActionDetails.cropRect = cropRect;
+                _editActionDetails.cropRect = Rect.fromLTWH(
+                    cropRect.left + 10,
+                    cropRect.top + 10,
+                    cropRect.width - 20,
+                    cropRect.height - 20);
               }
 
               return ExtendedImageCropLayer(

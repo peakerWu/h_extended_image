@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ImageEditorPage extends StatefulWidget {
-  ImageEditorPage({Key key}) : super(key: key);
+  const ImageEditorPage({Key key}) : super(key: key);
 
   @override
   _ImageEditorPageState createState() => _ImageEditorPageState();
@@ -21,37 +21,34 @@ class _ImageEditorPageState extends State<ImageEditorPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        child: ExtendedImage.network(
-          'http://static.zc0901.com/1574994685300.jpg',
-          fit: BoxFit.contain,
-          mode: ExtendedImageMode.editor,
-          enableLoadState: true,
-          extendedImageEditorKey: editorKey,
-          moveEnd: (Rect cropRect, Rect layoutRect) async {
-            debugPrint('layoutRect：$layoutRect');
-            debugPrint('cropRect：$cropRect');
-            // Rect.fromLTRB(left, top, right, bottom)
-            // Rect.fromLTWH(left, top, width, height)
-            await _cropImage();
-          },
-          initEditorConfigHandler: (ExtendedImageState state) {
-            return EditorConfig(
+    return Container(
+      width: double.infinity,
+      child: ExtendedImage.asset(
+        'assets/image.jpg',
+        fit: BoxFit.contain,
+        mode: ExtendedImageMode.editor,
+        enableLoadState: true,
+        extendedImageEditorKey: editorKey,
+        moveEnd: (Rect cropRect, Rect layoutRect) async {
+          debugPrint('layoutRect：$layoutRect');
+          debugPrint('cropRect：$cropRect');
+          // Rect.fromLTRB(left, top, right, bottom)
+          // Rect.fromLTWH(left, top, width, height)
+          await _cropImage();
+        },
+        initEditorConfigHandler: (ExtendedImageState state) {
+          return EditorConfig(
               maxScale: 4.0,
-              cropRectPadding: const EdgeInsets.all(20.0),
+              cropRectPadding: const EdgeInsets.all(0.0),
               hitTestSize: 20.0,
               initCropRectType: InitCropRectType.imageRect,
               cornerColor: Colors.red,
-              cornerSize: Size(30, 6),
+              cornerSize: const Size(30, 6),
               cropAspectRatio: CropAspectRatios.custom,
               editorMaskColorHandler: (_, pointerDown) {
                 return Colors.black.withOpacity(0.5);
-              }
-            );
-          },
-        ),
+              });
+        },
       ),
     );
   }
