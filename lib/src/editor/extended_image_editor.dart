@@ -164,9 +164,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                 // 修改覆盖框的边距
                 _editActionDetails.cropRect = Rect.fromLTWH(
                     cropRect.left + widget.margin,
-                    cropRect.top + MediaQuery.of(context).padding.top,
+                    MediaQuery.of(context).padding.top,
                     cropRect.width - widget.margin * 2,
-                    cropRect.height - widget.margin * 2);
+                    cropRect.height -
+                        widget.margin -
+                        MediaQuery.of(context).padding.top);
               }
 
               return ExtendedImageCropLayer(
