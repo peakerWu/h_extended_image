@@ -57,6 +57,7 @@ class ExtendedImage extends StatefulWidget {
     this.clearMemoryCacheWhenDispose = false,
     this.extendedImageGestureKey,
     this.moveEnd,
+    this.margin = 0.0,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -114,6 +115,7 @@ class ExtendedImage extends StatefulWidget {
     int cacheHeight,
     this.extendedImageGestureKey,
     this.moveEnd,
+    this.margin = 0.0,
   })  :
         //assert(autoCancel != null),
         image = ResizeImage.resizeIfNeeded(
@@ -196,6 +198,7 @@ class ExtendedImage extends StatefulWidget {
     this.clearMemoryCacheWhenDispose = false,
     this.extendedImageGestureKey,
     this.moveEnd,
+    this.margin = 0.0,
   })  : image = ExtendedFileImageProvider(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -373,6 +376,7 @@ class ExtendedImage extends StatefulWidget {
     this.clearMemoryCacheWhenDispose = false,
     this.extendedImageGestureKey,
     this.moveEnd,
+    this.margin = 0.0,
   })  : image = scale != null
             ? ExtendedExactAssetImageProvider(name,
                 bundle: bundle, scale: scale, package: package)
@@ -441,6 +445,7 @@ class ExtendedImage extends StatefulWidget {
     this.clearMemoryCacheWhenDispose = false,
     this.extendedImageGestureKey,
     this.moveEnd,
+    this.margin = 0.0,
   })  : image = ExtendedMemoryImageProvider(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -523,6 +528,8 @@ class ExtendedImage extends StatefulWidget {
   /// [BoxShape.circle] and [RoundedRectangleBorder] instead of
   /// [BoxShape.rectangle].
   final BoxShape shape;
+
+  final double margin;
 
   /// A border to draw above the background [color], [gradient], or [image].
   ///
@@ -1014,6 +1021,7 @@ class _ExtendedImageState extends State<ExtendedImage>
     } else if (widget.mode == ExtendedImageMode.editor) {
       current = ExtendedImageEditor(
         extendedImageState: this,
+        margin: widget.margin,
         key: widget.extendedImageEditorKey,
         moveEnd: widget.moveEnd,
       );

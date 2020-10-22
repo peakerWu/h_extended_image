@@ -29,6 +29,7 @@ class _ImageEditorPageState extends State<ImageEditorPage> {
         mode: ExtendedImageMode.editor,
         enableLoadState: true,
         extendedImageEditorKey: editorKey,
+        margin: 20,
         moveEnd: (Rect cropRect, Rect layoutRect) async {
           debugPrint('layoutRect：$layoutRect');
           debugPrint('cropRect：$cropRect');

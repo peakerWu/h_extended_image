@@ -16,14 +16,19 @@ import 'extended_image_editor_utils.dart';
 ///
 
 class ExtendedImageEditor extends StatefulWidget {
-  ExtendedImageEditor({this.extendedImageState, Key key, this.moveEnd})
-      : assert(extendedImageState.imageWidget.fit == BoxFit.contain,
+  ExtendedImageEditor({
+    this.extendedImageState,
+    Key key,
+    this.moveEnd,
+    this.margin = 0,
+  })  : assert(extendedImageState.imageWidget.fit == BoxFit.contain,
             'Make sure the image is all painted to crop,the fit of image must be BoxFit.contain'),
         assert(extendedImageState.imageWidget.image is ExtendedImageProvider,
             'Make sure the image provider is ExtendedImageProvider, we will get raw image data from it'),
         super(key: key);
   final ExtendedImageState extendedImageState;
   final Function(Rect layoutRect, Rect cropRect) moveEnd;
+  final double margin;
   @override
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
 }
@@ -156,11 +161,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                       : rect.width / cropRect.width;
                   cropRect = rect;
                 }
+                // 修改覆盖框的边距
                 _editActionDetails.cropRect = Rect.fromLTWH(
-                    cropRect.left + 10,
-                    cropRect.top + 10,
-                    cropRect.width - 20,
-                    cropRect.height - 20);
+                    cropRect.left + widget.margin,
+                    cropRect.top + widget.margin,
+                    cropRect.width - widget.margin * 2,
+                    cropRect.height - widget.margin * 2);
               }
 
               return ExtendedImageCropLayer(
